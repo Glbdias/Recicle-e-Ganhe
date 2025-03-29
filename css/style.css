@@ -1,0 +1,33 @@
+/*CONFIGURA PÁGINA DE ESCOLHA DA INSTITUIÇÃO*/
+.institution-card {
+    width: 100%;
+    max-width: 300px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.3s;
+  }
+  .institution-card:hover {
+    transform: scale(1.05);
+  }
+  .institution-card:active {
+    transform: scale(0.98);
+  }
+  .institution-card.selected {
+    background-color: #e0f7fa;
+    border-color: #00796b;
+    border-width: 2px;
+  }
+  .institution-card:not(.selected):hover {
+    background-color: #f1f8fc;
+  }
+  .icon {
+    width: 40px;
+    height: 40px;
+  }
+  .check-icon {
+    display: none;
+  }
+
+  .g-3, .gx-3{
+      --bs-gutter-x: 7rem;
+  }

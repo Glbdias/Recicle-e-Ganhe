@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleção de Fases - Recicla e Ganha</title>
+    <link rel="stylesheet" href="../css/pages.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #e9f7ef;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #2d6a4f;
+        }
+        .fase-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            margin: 10px;
+            font-size: 18px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .fase-btn:hover {
+            background-color: #45a049;
+        }
+        .fase-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Selecione uma Fase</h2>
+        <button class="fase-btn" id="fase1" onclick="iniciarFase(1)">Fase 1 - Iniciante</button>
+        <button class="fase-btn" id="fase2" onclick="iniciarFase(2)" disabled>Fase 2 - Intermediária</button>
+        <button class="fase-btn" id="fase3" onclick="iniciarFase(3)" disabled>Fase 3 - Avançada</button>
+        <button class="fase-btn" id="fase4" onclick="iniciarFase(4)" disabled>Fase 4 - Desafio Orgânico</button>
+        <button class="fase-btn" id="fase5" onclick="iniciarFase(5)" disabled>Fase 5 - Mistura Perigosa</button>
+        <button class="fase-btn" id="fase6" onclick="iniciarFase(6)" disabled>Fase 6 - O Mestre da Reciclagem</button>
+    </div>
+
+    <script>
+        function iniciarFase(fase) {
+            localStorage.setItem("fase", fase);
+            alert('Fase ' + fase + ' iniciada!');
+            // Redireciona para a tela do jogo
+            window.location.href = "/pages/game.html";
+        }
+
+        // Desbloquear fases após a conclusão de uma anterior
+        window.onload = function() {
+            let fase = localStorage.getItem("faseConcluida") || 0;
+            if (fase >= 1) document.getElementById('fase2').disabled = false;
+            if (fase >= 2) document.getElementById('fase3').disabled = false;
+            if (fase >= 3) document.getElementById('fase4').disabled = false;
+            if (fase >= 4) document.getElementById('fase5').disabled = false;
+            if (fase >= 5) document.getElementById('fase6').disabled = false;
+        }
+    </script>
+</body>
+</html>

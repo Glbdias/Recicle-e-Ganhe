@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="/css/style_game.css" />
+    <title>Recicla e Ganha</title>
+</head>
+<body>
+    <div class="container">
+        <h1>♻️ Recicla e Ganha</h1>
+        <h2 id="fase-info">Fase 1</h2>
+        <p>Vidas: <span id="vidas">3</span></p>
+        <p>Tempo restante: <span id="tempo">30</span> segundos</p>
+
+        <div class="card itens">
+            <h2>Itens para reciclar</h2>
+            <div id="itens-container"></div>
+        </div>
+
+        <div class="card">
+            <h2>Lixeiras</h2>
+            <div class="lixeiras-container" id="lixeiras-container"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Vitória -->
+    <div id="telaVitoria" class="overlay" style="display: none;">
+        <div class="box">
+            <h1>🎉 Parabéns!</h1>
+            <p>Você concluiu todas as fases!</p>
+            <button onclick="reiniciarJogo()">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <!-- Modal de Game Over -->
+    <div id="telaGameOver" class="overlay" style="display: none;">
+        <div class="box">
+            <h1>💀 Game Over</h1>
+            <p>Você perdeu todas as vidas ou o tempo acabou!</p>
+            <button onclick="reiniciarJogo()">Tentar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        let faseAtual = 1;
+        let tempo = 30;
+        let vidas = 3;
+        let reciclados = 0;
+        let totalItens;
+        let timer;
+
+        const fases = [
+            { itens: ["papel", "plastico"], lixeiras: { "papel": "azul", "plastico": "vermelha" } },
+            { itens: ["papel", "plastico", "vidro"], lixeiras: { "papel": "azul", "plastico": "vermelha", "vidro": "verde" } },
+            { itens: ["papel", "plastico", "vidro", "metal"], lixeiras: { "papel": "azul", "plastico": "vermelha", "vidro": "verde", "metal": "amarela" } },
+            { itens: ["papel", "plastico", "vidro", "metal", "organico"], lixeiras: { "papel": "azul", "plastico": "vermelha", "vidro": "verde", "metal": "amarela", "organico": "marrom" } },
+            { itens: ["papel", "plastico", "vidro", "metal", "organico", "eletronico"], lixeiras: { "papel": "azul", "plastico": "vermelha", "vidro": "verde", "metal": "amarela", "organico": "marrom", "eletronico": "cinza" } }
+        ];
+
+        function iniciarFase() {
+            document.getElementById("fase-info").textContent = `Fase ${faseAtual}`;
+            let fase = fases[faseAtual - 1];
+            totalItens = fase.itens.length;
+            reciclados = 0;
+
+            let itensContainer = document.getElementById("itens-container");
+            itensContainer.innerHTML = "";
+            fase.itens.forEach(item => {
+                let img = document.createElement("img");
+                img.src = `/assets/images/${item}.svg`;
+                img.alt = item;
+                img.className = "lixo";
+                img.draggable = true;
+                img.id = item;
+                img.ondragstart = drag;
+                itensContainer.appendChild(img);
+            });
+
+            let lixeirasContainer = document.getElementById("lixeiras-container");
+            lixeirasContainer.innerHTML = "";
+            for (let tipo in fase.lixeiras) {
+                let div = document.createElement("div");
+                div.className = `lixeira ${fase.lixeiras[tipo]}`;
+                div.ondrop = event => drop(event, tipo);
+                div.ondragover = allowDrop;
+                div.innerHTML = `Lixeira ${fase.lixeiras[tipo].charAt(0).toUpperCase() + fase.lixeiras[tipo].slice(1)}<br>(${tipo.charAt(0).toUpperCase() + tipo.slice(1)})`;
+                lixeirasContainer.appendChild(div);
+            }
+
+            iniciarTimer();
+        }
+
+        function iniciarTimer() {
+            clearInterval(timer);
+            tempo = 30 - (faseAtual * 2);
+            document.getElementById("tempo").textContent = tempo;
+            timer = setInterval(() => {
+                tempo--;
+                document.getElementById("tempo").textContent = tempo;
+                if (tempo === 0) {
+                    clearInterval(timer);
+                    mostrarGameOver();
+                }
+            }, 1000);
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+
+        function drop(event, tipoLixo) {
+            event.preventDefault();
+            let id = event.dataTransfer.getData("text");
+            let elemento = document.getElementById(id);
+            if (id === tipoLixo) {
+                event.target.appendChild(elemento);
+                elemento.style.pointerEvents = "none";
+                reciclados++;
+                if (reciclados === totalItens) {
+                    clearInterval(timer);
+                    if (faseAtual < fases.length) {
+                        faseAtual++;
+                        iniciarFase();
+                    } else {
+                        mostrarVitoria();
+                    }
+                }
+            } else {
+                vidas--;
+                document.getElementById("vidas").textContent = vidas;
+                alert("Ops! Esse lixo não pertence a essa lixeira.");
+                if (vidas === 0) {
+                    mostrarGameOver();
+                }
+            }
+        }
+
+        function mostrarGameOver() {
+            document.getElementById("telaGameOver").style.display = "flex";
+            clearInterval(timer);
+        }
+
+        function mostrarVitoria() {
+            document.getElementById("telaVitoria").style.display = "flex";
+            clearInterval(timer);
+        }
+
+        function reiniciarJogo() {
+            location.reload();
+        }
+
+        iniciarFase();
+    </script>
+</body>
+</html>

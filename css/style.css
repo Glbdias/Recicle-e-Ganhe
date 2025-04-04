@@ -31,3 +31,12 @@
   .g-3, .gx-3{
       --bs-gutter-x: 7rem;
   }
+
+  a{
+    text-decoration: none;
+    color: inherit; 
+  }
+
+  .institution-card > span{
+    text-align: center;
+  }

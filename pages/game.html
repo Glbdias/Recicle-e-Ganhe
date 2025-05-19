@@ -139,12 +139,26 @@
   </div>
 
   <!-- Vídeo de Introdução -->
-  <div id="video-container" style="display: none;">
-    <video id="intro-video" autoplay>
-      <source src="/assets/video/introdução.mp4" type="video/mp4">
-      Seu navegador não suporta vídeo HTML5.
-    </video>
-  </div>
+<!-- Vídeo de Introdução -->
+<div id="video-container" style="display: none;">
+  <video id="intro-video" autoplay>
+    <source src="/assets/video/introdução.mp4" type="video/mp4">
+    Seu navegador não suporta vídeo HTML5.
+  </video>
+  <button id="skip-button" style="
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 1001;
+  ">Pular Vídeo</button>
+</div>
+
 
   <!-- Conteúdo do jogo (inicialmente oculto) -->
   <div id="game-container">
@@ -387,7 +401,7 @@
       // Se o vídeo já foi assistido, inicia diretamente o jogo
       if (!videoAssistido) {
         document.getElementById('video-container').style.display = 'flex';
-        document.getElementById('intro-video').play(); // Reproduz o vídeo ao dar play
+        document.getElementById('intro-video').play();
         document.getElementById('intro-video').onended = function() {
           videoAssistido = true;
           document.getElementById('video-container').style.display = 'none';
@@ -399,6 +413,17 @@
         iniciarFase();
       }
     });
+
+  document.getElementById('skip-button').addEventListener('click', function() {
+  const video = document.getElementById('intro-video');
+  video.pause(); 
+  video.currentTime = 0; 
+  videoAssistido = true;
+  document.getElementById('video-container').style.display = 'none';
+  document.getElementById('game-container').style.display = 'block';
+  iniciarFase();
+});
+
   </script>
 </body>
 </html>

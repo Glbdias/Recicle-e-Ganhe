@@ -5,129 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="/css/style_game.css" />
   <title>Recicla e Ganha</title>
-  <style>
-    /* Estilos da tela inicial */
-    #inicio-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-       background-image: url('/assets/images/fundo-inicial.png');
-    }
-
-    #inicio-container h1 {
-      color: white;
-      font-size: 36px;
-      margin-bottom: 20px;
-    }
-
-    #start-button {
-      padding: 15px 30px;
-      font-size: 18px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    /* Estilos para o vídeo de introdução */
-    #video-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    #intro-video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* Estilos do jogo */
-    .container {
-      padding: 20px;
-    }
-
-    .lixeira {
-      display: inline-block;
-      padding: 10px;
-      text-align: center;
-      margin: 10px;
-      border-radius: 12px;
-      background-color: #f0f0f0;
-    }
-
-    .lixeira-img {
-      width: 100px;
-      height: auto;
-      user-select: none;
-    }
-
-    .lixo {
-      width: 80px;
-      height: auto;
-      margin: 10px;
-      cursor: grab;
-    }
-
-    .card {
-      margin-top: 20px;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      background: #fff;
-    }
-
-    .lixeiras-container, #itens-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    /* Modais de vitória e game over */
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .box {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      text-align: center;
-    }
-
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    #game-container {
-      display: none; /* Esconde o jogo até o vídeo terminar */
-    }
-  </style>
 </head>
 <body>
   <!-- Tela Inicial -->
@@ -139,26 +16,24 @@
   </div>
 
   <!-- Vídeo de Introdução -->
-<!-- Vídeo de Introdução -->
-<div id="video-container" style="display: none;">
-  <video id="intro-video" autoplay>
-    <source src="/assets/video/introdução.mp4" type="video/mp4">
-    Seu navegador não suporta vídeo HTML5.
-  </video>
-  <button id="skip-button" style="
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    z-index: 1001;
-  ">Pular Vídeo</button>
-</div>
-
+  <div id="video-container" style="display: none;">
+    <video id="intro-video" autoplay>
+      <source src="/assets/video/introdução.mp4" type="video/mp4">
+      Seu navegador não suporta vídeo HTML5.
+    </video>
+    <button id="skip-button" style="
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 1001;
+    ">Pular Vídeo</button>
+  </div>
 
   <!-- Conteúdo do jogo (inicialmente oculto) -->
   <div id="game-container">
@@ -169,12 +44,10 @@
       <p>Tempo restante: <span id="tempo">30</span> segundos</p>
 
       <div class="card itens">
-        <h2>Itens para reciclar</h2>
         <div id="itens-container"></div>
       </div>
 
-      <div class="card">
-        <h2>Lixeiras</h2>
+      <div class="card lixeiras">
         <div class="lixeiras-container" id="lixeiras-container"></div>
       </div>
     </div>
@@ -206,6 +79,14 @@
     let totalItens;
     let timer;
     let videoAssistido = false;
+
+    const backgroundImages = [
+      '/assets/fases-background/1.png',
+      // '/assets/fases-background/;.png',
+      // '/assets/fases-background/3.png',
+      // '/assets/fases-background/1.png',
+      // '/assets/fases-background/1.png',
+    ]
 
     const fases = [
       {
@@ -272,6 +153,8 @@
 
     // Função que inicia a fase do jogo
     function iniciarFase() {
+      setFaseBackground();
+
       document.getElementById("fase-info").textContent = `Fase ${faseAtual}`;
       let fase = fases[faseAtual - 1];
       reciclados = 0;
@@ -290,7 +173,22 @@
       totalItens = itensSelecionados.length;
 
       itensSelecionados.forEach(({ tipo, img }) => {
-        let el = document.createElement("img");
+        const el = document.createElement("img");
+        
+        el.style.position = "absolute";
+        el.style.pointerEvents = "auto";
+        el.style.width = "150px";
+        el.style.background = "#fff";
+        el.style.padding = "10px";
+        el.style.borderRadius = "8px";
+
+        const containerWidth = itensContainer.clientWidth;
+        const containerHeight = itensContainer.clientHeight;
+        const maxLeft = containerWidth - 100;
+        const maxTop = containerHeight - 100;
+
+        el.style.left = `${Math.random() * maxLeft}px`;
+        el.style.top = `${Math.random() * maxTop}px`;
         el.src = `/assets/images/${img}.png`;
         el.alt = tipo;
         el.className = "lixo";
@@ -298,8 +196,10 @@
         el.id = img;
         el.dataset.tipo = tipo;
         el.ondragstart = drag;
+
         itensContainer.appendChild(el);
       });
+
 
       let lixeirasContainer = document.getElementById("lixeiras-container");
       lixeirasContainer.innerHTML = "";
@@ -320,6 +220,16 @@
       }
 
       iniciarTimer();
+    }
+
+    function setFaseBackground() {
+      // let backgroundImage = backgroundImages[faseAtual];
+      let backgroundImage = "/assets/fases-background/1.png";
+      const gameContainer = document.querySelector(".container");
+      gameContainer.style.backgroundImage = `url(${backgroundImage})`;
+      gameContainer.style.backgroundRepeat = "no-repeat";
+      gameContainer.style.backgroundSize = "cover";
+      gameContainer.style.backgroundPosition = "center";
     }
 
     function iniciarTimer() {
@@ -414,15 +324,15 @@
       }
     });
 
-  document.getElementById('skip-button').addEventListener('click', function() {
-  const video = document.getElementById('intro-video');
-  video.pause(); 
-  video.currentTime = 0; 
-  videoAssistido = true;
-  document.getElementById('video-container').style.display = 'none';
-  document.getElementById('game-container').style.display = 'block';
-  iniciarFase();
-});
+    document.getElementById('skip-button').addEventListener('click', function() {
+      const video = document.getElementById('intro-video');
+      video.pause(); 
+      video.currentTime = 0; 
+      videoAssistido = true;
+      document.getElementById('video-container').style.display = 'none';
+      document.getElementById('game-container').style.display = 'block';
+      iniciarFase();
+    });
 
   </script>
 </body>
